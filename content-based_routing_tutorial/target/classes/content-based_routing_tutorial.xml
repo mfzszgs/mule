@@ -8,17 +8,25 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <flow name="content-based_routing_tutorialFlow1" doc:name="content-based_routing_tutorialFlow1">
-        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" doc:name="HTTP"/>
+        <http:inbound-endpoint exchange-pattern="request-response" host="0.0.0.0" port="8081" doc:name="HTTP"/>
         <expression-filter expression="#[message.inboundProperties.'http.request.uri' != '/favicon.ico']" doc:name="Expression"/>
-        <set-variable variableName="firstnum" value="#[message.inboundProperties.'http.query.params'.firstnum]" doc:name="Secondnum"/>
+        <set-variable variableName="operator" value="#[message.inboundProperties.'http.relative.path']" doc:name="Variable"/>
         <choice doc:name="Choice">
-            <when expression="#[flowVars.firstnum == '2' or  flowVars.firstnum == '3']">
-                <logger message="#[payload]" level="INFO" doc:name="Logger"/>
-                <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="demo#[payload]" method="POST" doc:name="HTTP"/>
+            <when expression="#[flowVars.operator==CalculatorMul]">
+                <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="demo#[payload]" method="POST" doc:name="Mul"/>
             </when>
-            <when expression="#[flowVars.firstnum == '1']">
-                <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" method="POST" doc:name="HTTP"/>
+            <when expression="#[flowVars.operator==CalculatorDiv]">
+                <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="demo#[payload]" method="POST" doc:name="Div"/>
             </when>
+            <when expression="#[flowVars.operator==CalculatorAdd]">
+                <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="demo#[payload]" method="POST" doc:name="Add"/>
+            </when>
+            <when expression="#[flowVars.operator==CalculatorSub]">
+                <http:outbound-endpoint exchange-pattern="request-response" host="localhost" port="8080" path="demo#[payload]" method="POST" doc:name="Sub"/>
+            </when>
+            <otherwise>
+                <logger message="#[payload]" level="INFO" doc:name="payload"/>
+            </otherwise>
         </choice>
     </flow>
 </mule>
