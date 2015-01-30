@@ -33,7 +33,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
                 <data-mapper:transform config-ref="contact_to_map" doc:name="Contact To Map"/>
                 <enricher doc:name="Message Enricher">
                         <db:select config-ref="MySQL_Configuration" doc:name="Check existence in Database">
-                            <db:parameterized-query><![CDATA[SELECT first_name,last_name,email FROM contact WHERE email=#[payload.email]]]></db:parameterized-query>
+                        <db:parameterized-query><![CDATA[SELECT first_name,last_name,email FROM contact WHERE email=#[payload.email]]]></db:parameterized-query>
                         </db:select>
                     <enrich source="#[payload.size() > 0]" target="#[recordVars['exists']]"/>
                     <enrich source="#[payload]" target="#[recordVars['dbRecord']]"/>
@@ -42,9 +42,9 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
             <batch:step name="Batch_Stepx">
                 <choice doc:name="Choice">
                     <when expression="#[recordVars['exists']==false]">
-                        <db:insert config-ref="MySQL_Configuration" doc:name="Create contact">
+                        <db:select config-ref="MySQL_Configuration" doc:name="Create contact">
                             <db:parameterized-query><![CDATA[INSERT INTO contact (first_name, last_name, email) VALUES (#[payload.first_name],#[payload.last_name],#[payload.email])]]></db:parameterized-query>
-                        </db:insert>
+                        </db:select>
                     </when>
                     <when expression="#[recordVars['exists']==true and recordVars['dbRecord'] != null]">
                         <db:update config-ref="MySQL_Configuration" doc:name="Update Contact">

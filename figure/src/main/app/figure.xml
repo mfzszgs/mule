@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="Bank1Flow" doc:name="Bank1Flow">
+        <description>
+            To figure two number
+        </description>
+        
+		<http:inbound-endpoint address="http://localhost:7777" exchange-pattern="request-response" doc:name="HTTP"/>
+		
+		<http:body-to-parameter-map-transformer doc:name="Body to Parameter Map"/>
+		
+		<choice doc:name="Choice">
+            <when expression="!(payload['firstNum'] == null || payload['secondNum'] == null || payload['operator'] == null)">
+                    <expression-component doc:name="create figure request">
+                        import message.FigureRequest;
+                        payload = new FigureRequest(Integer.parseInt(payload['firstNum']), Integer.parseInt(payload['secondNum']), payload['operator']);
+                    </expression-component>
+                    <flow-ref name="deal" doc:name="deal"/>
+                    <object-to-string-transformer doc:name="Object to String"/>
+            </when>
+            <otherwise>
+                <expression-component doc:name="set error message">payload="Error: incomplete request"</expression-component>
+            </otherwise>
+        </choice>
+        
+        
+    </flow>
+    
+    <sub-flow name="deal" doc:name="deal">
+        <description>
+            Returns the figure result
+        </description>
+        <choice doc:name="Choice">
+			<when expression="payload.getOperator() == 'add'">
+	        	<processor-chain doc:name="Processor Chain">
+	            	<cxf:jaxws-client serviceClass="Service.AddService" operation="getAddResult" doc:name="getAddResult"/>
+	            	<http:outbound-endpoint address="http://127.0.0.1:7778/AddService" doc:name="HTTP"/>
+	        	</processor-chain>
+			</when>
+			<when expression="payload.getOperator() == 'sub'">
+	        	<processor-chain doc:name="Processor Chain">
+	            	<cxf:jaxws-client serviceClass="Service.SubService" operation="getSubResult" doc:name="getSubResult"/>
+	            	<http:outbound-endpoint address="http://127.0.0.1:7779/SubService" doc:name="HTTP"/>
+	        	</processor-chain>
+			</when>
+			<when expression="payload.getOperator() == 'mul'">
+	        	<processor-chain doc:name="Processor Chain">
+	            	<cxf:jaxws-client serviceClass="Service.MulService" operation="getMulResult" doc:name="getMulResult"/>
+	            	<http:outbound-endpoint address="http://127.0.0.1:7780/MulService" doc:name="HTTP"/>
+	        	</processor-chain>
+			</when>
+			<when expression="payload.getOperator() == 'div'">
+	        	<processor-chain doc:name="Processor Chain">
+	            	<cxf:jaxws-client serviceClass="Service.DivService" operation="getDivResult" doc:name="getDivResult"/>
+	            	<http:outbound-endpoint address="http://127.0.0.1:7781/DivService" doc:name="HTTP"/>
+	        	</processor-chain>
+			</when>
+			<otherwise>
+	            	<expression-component doc:name="Error">payload="Error: The operator is not exist")</expression-component>
+	        </otherwise>
+	    </choice>
+        <logger level="INFO" message="result: #[payload]" doc:name="result"/>
+    </sub-flow>
+
+</mule>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jdbc-ee="http://www.mulesoft.org/schema/mule/ee/jdbc" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd">
+    <db:mysql-config name="MySQL_Configuration" host="localhost" port="3306" user="root" password="s" database="mldn" doc:name="MySQL Configuration"/>
+    <flow name="daoFlow1" doc:name="daoFlow1">
+        <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" doc:name="HTTP"/>
+        <cxf:jaxws-service doc:name="CXF"/>
+        <choice doc:name="Choice">
+            <when expression="">
+                <db:select config-ref="MySQL_Configuration" doc:name="Select">
+                    <db:parameterized-query/>
+                </db:select>
+            </when>
+            <when expression="">
+                <db:insert config-ref="MySQL_Configuration" doc:name="Insert">
+                    <db:parameterized-query/>
+                </db:insert>
+            </when>
+            <when expression="">
+                <db:update config-ref="MySQL_Configuration" doc:name="Update">
+                    <db:parameterized-query/>
+                </db:update>
+            </when>
+            <when expression="">
+                <db:delete config-ref="MySQL_Configuration" doc:name="Delete">
+                    <db:parameterized-query/>
+                </db:delete>
+            </when>
+            <otherwise>
+                <expression-component doc:name="Err"><![CDATA[payload="Error: The operator is not exist"]]></expression-component>
+            </otherwise>
+        </choice>
+    </flow>
+</mule>
