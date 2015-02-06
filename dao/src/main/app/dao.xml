@@ -12,7 +12,10 @@ http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/
     <db:mysql-config name="MySQL_Configuration" host="localhost" port="3306" user="root" password="s" database="mldn" doc:name="MySQL Configuration"/>
     <flow name="daoFlow1" doc:name="daoFlow1">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" doc:name="HTTP"/>
-        <cxf:jaxws-service doc:name="CXF"/>
+        <cxf:jaxws-service doc:name="CXF" serviceClass="mfzszgs.service.DaoServerImpl"/>
+        <component doc:name="Java">
+            <singleton-object class="mfzszgs.service.DaoServerImpl"/>
+        </component>
         <choice doc:name="Choice">
             <when expression="">
                 <db:select config-ref="MySQL_Configuration" doc:name="Select">

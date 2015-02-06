@@ -3,11 +3,11 @@
 <mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
 	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.0"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.5.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
-http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 	<flow name="Bank1Flow" doc:name="Bank1Flow">
         <description>
@@ -20,15 +20,14 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 		
 		<choice doc:name="Choice">
             <when expression="!(payload['firstNum'] == null || payload['secondNum'] == null || payload['operator'] == null)">
-                    <expression-component doc:name="create figure request">
-                        import message.FigureRequest;
-                        payload = new FigureRequest(Integer.parseInt(payload['firstNum']), Integer.parseInt(payload['secondNum']), payload['operator']);
+                    <expression-component doc:name="create figure request"><![CDATA[  import message.FigureRequest;
+  payload = new FigureRequest(Integer.parseInt(payload['firstNum']), Integer.parseInt(payload['secondNum']), payload['operator']);]]>
                     </expression-component>
                     <flow-ref name="deal" doc:name="deal"/>
                     <object-to-string-transformer doc:name="Object to String"/>
             </when>
             <otherwise>
-                <expression-component doc:name="set error message">payload="Error: incomplete request"</expression-component>
+                <expression-component doc:name="set error message"><![CDATA[payload="Error: incomplete request"]]></expression-component>
             </otherwise>
         </choice>
         
@@ -65,7 +64,7 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 	        	</processor-chain>
 			</when>
 			<otherwise>
-	            	<expression-component doc:name="Error">payload="Error: The operator is not exist")</expression-component>
+	            	<expression-component doc:name="Error"><![CDATA[payload="Error: The operator is not exist")]]></expression-component>
 	        </otherwise>
 	    </choice>
         <logger level="INFO" message="result: #[payload]" doc:name="result"/>

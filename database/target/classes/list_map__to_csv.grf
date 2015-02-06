@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><Graph __version="3.5.0" author="swy" created="Sat Jan 31 14:55:36 CST 2015" description="List&lt;Map&gt; To CSV" guiVersion="3.4.4.P" id="1422721913073" licenseCode="Unlicensed" licenseType="Unknown" modified="Sat Jan 31 14:55:36 CST 2015" modifiedBy="swy" name="List_Map__To_CSV" revision="1.0" showComponentDetails="false">
+<Global>
+<Metadata __index="0" __referenceCounter="1" __sourcePath="{}/Map" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _id="__id" _type="Input" id="4200ce31-a4d3-4bbb-8c34-dc650c5cbee6">
+<Record fieldDelimiter="," name="Map" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field __artificialType="_id" __systemManaged="true" name="__id" type="string"/>
+<Field __implementationClass="java.lang.Integer" __index="2" __sourcePath="{}/Map/AuthorID" containerType="SINGLE" label="AuthorID" name="AuthorID" type="integer"/>
+<Field __implementationClass="java.lang.Integer" __index="1" __sourcePath="{}/Map/ColumnID" containerType="SINGLE" label="ColumnID" name="ColumnID" type="integer"/>
+<Field __implementationClass="java.lang.Integer" __index="5" __sourcePath="{}/Map/ID" containerType="SINGLE" label="ID" name="ID" type="integer"/>
+<Field __dmType="Calendar" __implementationClass="java.util.Calendar" __index="0" __sourcePath="{}/Map/InputDate" containerType="SINGLE" label="InputDate" name="InputDate" type="string"/>
+<Field __implementationClass="java.lang.String" __index="3" __sourcePath="{}/Map/Keywords" containerType="SINGLE" label="Keywords" name="Keywords" type="string"/>
+<Field __implementationClass="java.lang.Boolean" __index="4" __sourcePath="{}/Map/PictrueID" containerType="SINGLE" label="PictrueID" name="PictrueID" type="boolean"/>
+<Field __implementationClass="java.lang.Boolean" __index="6" __sourcePath="{}/Map/PublishID" containerType="SINGLE" label="PublishID" name="PublishID" type="boolean"/>
+</Record>
+</Metadata>
+<Metadata __referenceCounter="1" _dataStructure="SINGLE_DIMENSIONAL_COLLECTION" _type="Output" id="0b919b97-b3a0-4ce9-8c82-41793eb36608">
+<Record fieldDelimiter="," name="Map" recordDelimiter="\n\\|\r\n\\|\r" type="delimited">
+<Field containerType="SINGLE" label="AuthorID" name="AuthorID" size="10" type="integer"/>
+<Field containerType="SINGLE" label="ColumnID" name="ColumnID" size="10" type="integer"/>
+<Field containerType="SINGLE" label="ID" name="ID" size="10" type="integer"/>
+<Field __dmType="Calendar" containerType="SINGLE" label="InputDate" name="InputDate" size="10" type="string"/>
+<Field containerType="SINGLE" label="Keywords" name="Keywords" size="10" type="string"/>
+<Field containerType="SINGLE" label="PictrueID" name="PictrueID" size="10" type="boolean"/>
+<Field containerType="SINGLE" eofAsDelimiter="true" label="PublishID" name="PublishID" size="10" type="boolean"/>
+<Field __artificialType="_id" name="__id" type="long"/>
+</Record>
+</Metadata>
+<Dictionary>
+<Entry id="DictionaryEntry0" input="true" name="inputPayload" output="false" type="object"/>
+<Entry id="DictionaryEntry1" input="false" name="outputPayload" output="true" type="object"/>
+</Dictionary>
+</Global>
+<Phase number="0">
+<Node enabled="enabled" fileURL="dict:inputPayload" guiName="Map&lt;k,v&gt; READER" guiX="20" guiY="20" id="BEAN_READER0" type="BEAN_READER">
+<attr name="mapping"><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Context outPort="0" sequenceField="__id" xpath=".">
+  <Mapping cloverField="AuthorID" trim="true" xpath="AuthorID"/>
+  <Mapping cloverField="ColumnID" trim="true" xpath="ColumnID"/>
+  <Mapping cloverField="ID" trim="true" xpath="ID"/>
+  <Mapping cloverField="InputDate" trim="true" xpath="InputDate"/>
+  <Mapping cloverField="Keywords" trim="true" xpath="Keywords"/>
+  <Mapping cloverField="PictrueID" trim="true" xpath="PictrueID"/>
+  <Mapping cloverField="PublishID" trim="true" xpath="PublishID"/>
+</Context>
+]]></attr>
+<attr name="__typeName"><![CDATA[select * from news;]]></attr>
+<attr name="_data_format"><![CDATA[MAP]]></attr>
+<attr name="__operationName"><![CDATA[http://www.mulesoft.org/schema/mule/db/select]]></attr>
+<attr name="__connectorName"><![CDATA[MySQL_Configuration]]></attr>
+</Node>
+<Node charset="UTF-8" enabled="enabled" excludeFields="__id" fileURL="dict:outputPayload" guiName="CSV WRITER" guiX="900" guiY="20" id="DATA_WRITER0" quotedStrings="true" type="DATA_WRITER">
+<attr name="_data_format"><![CDATA[CSV]]></attr>
+</Node>
+<Node enabled="enabled" guiName="Foreach 'Map' -&gt; 'Map'" guiX="460" guiY="20" id="FOREACH_MAP_MAP" transformClass="com.mulesoft.datamapper.transform.MelRecordTransform" type="REFORMAT">
+<attr name="melScript"><![CDATA[//MEL
+//START -> DO NOT REMOVE
+output.__id = str2long(input.__id);
+//END -> DO NOT REMOVE
+output.AuthorID = input.AuthorID;
+output.ColumnID = input.ColumnID;
+output.ID = input.ID;
+output.InputDate = input.InputDate;
+output.Keywords = input.Keywords;
+output.PictrueID = input.PictrueID;
+output.PublishID = input.PublishID;
+]]></attr>
+</Node>
+<Edge debugMode="true" fromNode="BEAN_READER0:0" guiBendpoints="" id="Edge0" inPort="Port 0 (in)" metadata="4200ce31-a4d3-4bbb-8c34-dc650c5cbee6" outPort="Port 0 (out)" toNode="FOREACH_MAP_MAP:0"/>
+<Edge debugMode="true" fromNode="FOREACH_MAP_MAP:0" guiBendpoints="" id="Edge1" inPort="Port 0 (in)" metadata="0b919b97-b3a0-4ce9-8c82-41793eb36608" outPort="Port 0 (out)" toNode="DATA_WRITER0:0"/>
+</Phase>
+</Graph>
